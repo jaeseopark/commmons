@@ -5,5 +5,6 @@ from .fs import *
 from .hash import *
 from .html import *
 from .log import *
+from .string import *
 from .url import *
 from .zip import *
