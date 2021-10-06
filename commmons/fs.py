@@ -1,5 +1,9 @@
 import os
 
+__all__ = [
+    "get_filesize_in_bytes"
+]
+
 
 def get_filesize_in_bytes(path: str):
     if os.path.isdir(path):

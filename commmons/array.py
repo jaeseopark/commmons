@@ -1,5 +1,9 @@
 from math import floor
 
+__all__ = [
+    "linear_sample"
+]
+
 
 def linear_sample(array: list, n: int) -> list:
     if n >= len(array):

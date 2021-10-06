@@ -2,6 +2,11 @@ import requests
 from lxml import html
 from lxml.html import HtmlElement
 
+__all__ = [
+    "html_from_url",
+    "html_to_string"
+]
+
 
 def html_from_url(url, **kwargs) -> HtmlElement:
     r = requests.get(url, **kwargs)

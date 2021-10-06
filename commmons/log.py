@@ -1,5 +1,9 @@
 import logging
 
+__all__ = [
+    "get_prefixed_logger"
+]
+
 
 def get_prefixed_logger(parent_logger, prefix) -> logging.Logger:
     class CustomAdapter(logging.LoggerAdapter):

@@ -1,6 +1,11 @@
 import shutil
 import zipfile
 
+__all__ = [
+    "create_zip",
+    "is_valid_zip"
+]
+
 
 def create_zip(basename, source_dir, retry=3) -> str:
     """
