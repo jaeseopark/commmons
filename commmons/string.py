@@ -1,10 +1,10 @@
 import re
 
-_non_numeric = re.compile(r'[^\d]+')
-
 __all__ = [
     "strip_non_numeric"
 ]
+
+_non_numeric = re.compile(r'[^\d]+')
 
 
 def strip_non_numeric(s: str) -> str:
