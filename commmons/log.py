@@ -4,7 +4,9 @@ import os
 
 __all__ = [
     "get_prefixed_logger",
-    "get_file_handler"
+    "get_file_handler",
+    "with_prefix",
+    "with_timer"
 ]
 
 
@@ -15,14 +17,6 @@ class LockingFileHandler(logging.FileHandler):
     def emit(self, record: logging.LogRecord) -> None:
         with multiprocessing.Lock():
             super().emit(record)
-
-
-def get_prefixed_logger(parent_logger, prefix) -> logging.Logger:
-    class CustomAdapter(logging.LoggerAdapter):
-        def process(self, msg, kwargs):
-            return '%s %s' % (self.extra['prefix'], msg), kwargs
-
-    return CustomAdapter(parent_logger, {'prefix': prefix})
 
 
 def get_file_handler(path: str,
@@ -38,3 +32,25 @@ def get_file_handler(path: str,
     handler = cls(path)
     handler.setFormatter(formatter)
     return handler
+
+
+def with_prefix(parent_logger, prefix) -> logging.LoggerAdapter:
+    class PrefixAdapter(logging.LoggerAdapter):
+        def process(self, msg, kwargs):
+            return '%s %s' % (self.extra['prefix'], msg), kwargs
+
+    return PrefixAdapter(parent_logger, {'prefix': prefix})
+
+
+# legacy name support
+get_prefixed_logger = with_prefix
+
+
+def with_timer(parent_logger) -> logging.LoggerAdapter:
+    from commmons import now_seconds
+
+    class TimerAdapter(logging.LoggerAdapter):
+        def process(self, msg, kwargs):
+            return 'elapsed=%s %s' % (now_seconds() - self.extra['start_time'], msg), kwargs
+
+    return TimerAdapter(parent_logger, {'start_time': now_seconds()})
