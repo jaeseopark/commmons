@@ -3,7 +3,8 @@ from pathlib import Path
 
 __all__ = [
     "get_filesize_in_bytes",
-    "touch"
+    "touch",
+    "touch_directory"
 ]
 
 
@@ -19,8 +20,11 @@ def touch(path: str, is_directory=False):
     if os.path.exists(path):
         return
 
-    os.makedirs(Path(path).parent, exist_ok=True)
-    open(path, "a").close()
+    if is_directory:
+        os.makedirs(path, exist_ok=True)
+    else:
+        os.makedirs(Path(path).parent, exist_ok=True)
+        open(path, "a").close()
 
 
 def touch_directory(path: str):
