@@ -16,6 +16,6 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.8",
     install_requires=["requests", "lxml", "pydash"]
 )
