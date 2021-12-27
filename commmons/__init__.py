@@ -9,3 +9,4 @@ from .string import *
 from .url import *
 from .zip import *
 from .dictionary import *
+from .func import *
