@@ -5,7 +5,7 @@ __all__ = [
     "with_prefix",
     "with_timer",
     "get_formatter",
-    "get_logger_with_handlers"
+    "init_logger_with_handlers"
 ]
 
 import os
@@ -34,7 +34,7 @@ class LockingFileHandler(logging.FileHandler):
             super().emit(record)
 
 
-def get_logger_with_handlers(name: str, level: int, path: str) -> logging.Logger:
+def init_logger_with_handlers(name: str, level: int, path: str) -> logging.Logger:
     from commmons import touch
 
     STREAM_HANDLER_NAME = "commmons_stream_handler"
