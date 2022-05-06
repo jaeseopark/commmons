@@ -8,6 +8,9 @@ __all__ = [
     "get_logger_with_handlers"
 ]
 
+import os
+from pathlib import Path
+
 from typing import Union
 
 from pydash import head
@@ -39,6 +42,7 @@ def get_logger_with_handlers(name: str, level: int, path: str) -> logging.Logger
 
     logger = logging.getLogger(name)
     logger.setLevel(level)
+    os.makedirs(Path(path).parent, exist_ok=True)
     touch(path)
 
     shdlr = head([h for h in logger.handlers if h.name == STREAM_HANDLER_NAME])
