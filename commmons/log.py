@@ -1,13 +1,25 @@
 import logging
 import multiprocessing
-import os
 
 __all__ = [
-    "get_prefixed_logger",
-    "get_file_handler",
     "with_prefix",
-    "with_timer"
+    "with_timer",
+    "get_formatter",
+    "get_logger_with_handlers"
 ]
+
+from typing import Union
+
+from pydash import head
+
+FORMAT = "%(asctime)s %(levelname)-5s %(funcName)-26s %(message)s"
+DATEFMT = "%Y-%m-%d %H:%M:%S"
+
+
+def get_formatter():
+    fmtr = logging.Formatter(FORMAT)
+    fmtr.datefmt = DATEFMT
+    return fmtr
 
 
 class LockingFileHandler(logging.FileHandler):
@@ -19,31 +31,36 @@ class LockingFileHandler(logging.FileHandler):
             super().emit(record)
 
 
-def get_file_handler(path: str,
-                     fmt: str = "%(asctime)s %(levelname)-5s %(funcName)-26s %(message)s",
-                     datefmt: str = "%Y-%m-%d %H:%M:%S",
-                     multiprocessing_safe=False) -> logging.FileHandler:
-    assert os.path.exists(path)
+def get_logger_with_handlers(name: str, level: int, path: str) -> logging.Logger:
+    STREAM_HANDLER_NAME = "commmons_stream_handler"
+    FILE_HANDLER_NAME = "commmons_file_handler"
 
-    formatter = logging.Formatter(fmt)
-    formatter.datefmt = datefmt
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
 
-    cls = LockingFileHandler if multiprocessing_safe else logging.FileHandler
-    handler = cls(path)
-    handler.setFormatter(formatter)
-    return handler
+    shdlr = head([h for h in logger.handlers if h.name == STREAM_HANDLER_NAME])
+    if not shdlr:
+        shdlr = logging.StreamHandler()
+        shdlr.name = STREAM_HANDLER_NAME
+        logger.addHandler(shdlr)
+    shdlr.setFormatter(get_formatter())
+
+    fhdlr = head([h for h in logger.handlers if h.name == FILE_HANDLER_NAME])
+    if not fhdlr:
+        fhdlr = logging.FileHandler(path)
+        fhdlr.name = FILE_HANDLER_NAME
+        logger.addHandler(fhdlr)
+    fhdlr.setFormatter(get_formatter())
+
+    return logger
 
 
-def with_prefix(parent_logger, prefix) -> logging.LoggerAdapter:
+def with_prefix(parent_logger: Union[logging.Logger, logging.LoggerAdapter], prefix: str) -> logging.LoggerAdapter:
     class PrefixAdapter(logging.LoggerAdapter):
         def process(self, msg, kwargs):
             return '%s %s' % (self.extra['prefix'], msg), kwargs
 
     return PrefixAdapter(parent_logger, {'prefix': prefix})
-
-
-# legacy name support
-get_prefixed_logger = with_prefix
 
 
 def with_timer(parent_logger) -> logging.LoggerAdapter:
