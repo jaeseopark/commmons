@@ -32,11 +32,14 @@ class LockingFileHandler(logging.FileHandler):
 
 
 def get_logger_with_handlers(name: str, level: int, path: str) -> logging.Logger:
+    from commmons import touch
+
     STREAM_HANDLER_NAME = "commmons_stream_handler"
     FILE_HANDLER_NAME = "commmons_file_handler"
 
     logger = logging.getLogger(name)
     logger.setLevel(level)
+    touch(path)
 
     shdlr = head([h for h in logger.handlers if h.name == STREAM_HANDLER_NAME])
     if not shdlr:
