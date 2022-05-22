@@ -34,7 +34,8 @@ class LockingFileHandler(logging.FileHandler):
             super().emit(record)
 
 
-def init_logger_with_handlers(name: str, level: int, path: str) -> logging.Logger:
+def init_logger_with_handlers(name: str, level: int, path: str,
+                              file_handler_class=logging.FileHandler) -> logging.Logger:
     from commmons import touch
 
     STREAM_HANDLER_NAME = "commmons_stream_handler"
@@ -54,7 +55,7 @@ def init_logger_with_handlers(name: str, level: int, path: str) -> logging.Logge
 
     fhdlr = head([h for h in logger.handlers if h.name == FILE_HANDLER_NAME])
     if not fhdlr:
-        fhdlr = logging.FileHandler(path)
+        fhdlr = file_handler_class(path)
         fhdlr.name = FILE_HANDLER_NAME
         logger.addHandler(fhdlr)
     fhdlr.setFormatter(get_formatter())
