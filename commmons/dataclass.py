@@ -15,9 +15,9 @@ def as_dataclass(dct: dict, cls: type):
             if origin:
                 cls_arg = get_args(fld.type)[-1]
                 is_dc = is_dataclass(cls_arg)
-                if origin == list and is_dc:
+                if origin == list and is_dc and dct[fld.name] is not None:
                     kwargs[fld.name] = [as_dataclass(element, cls_arg) for element in dct[fld.name]]
-                elif origin == dict and is_dc:
+                elif origin == dict and is_dc and dct[fld.name] is not None:
                     kwargs[fld.name] = {k: as_dataclass(v, cls_arg) for k, v in dct[fld.name].items()}
             elif is_dataclass(fld.type):
                 kwargs[fld.name] = as_dataclass(dct[fld.name], fld.type)
