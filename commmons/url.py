@@ -17,9 +17,7 @@ def get_host_url(url: str):
 def get_query_params(url: str) -> Dict[str, List[str]]:
     parsed_url = urlparse(url)
     parsed_qs = parse_qs(parsed_url.query)
-    if parsed_qs:
-        return {str(key): str(value) for key, value in parsed_qs.items()}
-    return dict()
+    return parsed_qs or dict()
 
 
 def breakdown(url: str) -> Tuple[str, Dict[str, List[str]]]:
